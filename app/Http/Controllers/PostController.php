@@ -9,13 +9,9 @@ class PostController extends Controller
 {
     public function index()
     {
-        // $posts = Post::with('user')->latest()->get(); // Загрузка постов
-        // // dd($posts);
-        // return view('posts.index', compact('posts'));
         $posts = Post::with(['user', 'likes', 'comments'])
             ->latest()
             ->paginate(12);
-        // dd($posts);
         return view('posts.index', compact('posts'));
     }
 
@@ -34,7 +30,7 @@ class PostController extends Controller
         $path = $request->file('img')->store('posts', 'public');
 
         Post::create([
-            'user_id' => auth()->id,
+            'user_id' => auth()->id(),
             'img_path' => $path,
             'body' => $request->caption,
         ]);
