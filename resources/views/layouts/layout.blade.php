@@ -13,11 +13,10 @@
 </head>
 
 <body class="bg-gray-100 font-sans">
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
+    <div class="min-h-screen flex">
+        <!-- Sidebar for Desktop -->
         <aside class="w-1/4 bg-white border-r p-4 hidden md:block">
             <div class="flex flex-col items-start">
-
                 <div>
                     <a href="{{ route('home') }}"
                         class="group font-bold text-3xl flex items-center space-x-4 hover:text-emerald-600 transition">
@@ -28,33 +27,30 @@
                 </div>
 
                 <nav class="flex flex-col space-y-4 pt-8">
-                    <!-- Search Form -->
-                    <form action="{{ route('search') }}" method="GET"
-                        class="flex items-center bg-gray-200 rounded-lg">
-                        <input type="text" name="query" placeholder="Search..."
-                            class="bg-transparent border-none p-2 w-full rounded-l-lg focus:outline-none">
-                        <button type="submit"
-                            class="bg-blue-500 text-white font-bold py-2 px-4 rounded-r-lg">Search</button>
-                    </form>
-
                     <!-- Menu Links -->
                     <a href="{{ route('home') }}"
                         class="flex items-center space-x-2 text-gray-700 hover:text-black {{ request()->routeIs('home') ? 'text-black font-semibold' : '' }}">
                         <i class="fas fa-home"></i><span>Home</span>
                     </a>
-                    <a href="#" class="flex items-center space-x-2 text-gray-700 hover:text-black">
-                        <i class="fas fa-bell"></i><span>Notifications</span>
-                    </a>
-                    <a href="#" class="flex items-center space-x-2 text-gray-700 hover:text-black">
+                    <a href="{{ route('chat.list') }}"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-black">
                         <i class="fas fa-envelope"></i><span>Messages</span>
                     </a>
                     <a href="{{ route('profile.index') }}"
                         class="flex items-center space-x-2 text-gray-700 hover:text-black {{ request()->routeIs('profile.index') ? 'text-black font-semibold' : '' }}">
                         <i class="fas fa-user"></i><span>Profile</span>
                     </a>
+                    <a href="{{ route('my.posts') }}"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-black">
+                        <i class="fas fa-user-edit"></i><span>My Posts</span>
+                    </a>
                     <a href="{{ route('posts.create') }}"
                         class="flex items-center space-x-2 text-gray-700 hover:text-black">
-                        <i class="fas fa-plus"></i><span>Create</span>
+                        <i class="fas fa-plus"></i><span>Create post</span>
+                    </a>
+                    <a href="{{ route('posts.index') }}"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-black">
+                        <i class="fas fa-th-list"></i><span>All posts</span>
                     </a>
                     <form method="POST" action="{{ route('logout') }}" class="pt-4">
                         @csrf
@@ -67,26 +63,79 @@
             </div>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="w-full md:w-2/4 p-6">
-            <!-- Stories Section -->
-            <div class="flex space-x-4 overflow-x-auto mb-6 bg-gray-100 p-4 rounded-lg">
-                {{-- {{ $stories }} --}}
-                <p>Stories placeholder</p>
-            </div>
+        <!-- Mobile menu button -->
+        <div class="block md:hidden p-4">
+            <button id="menu-toggle" class="text-gray-700 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
 
-            <!-- Main Feed -->
-            <div class="space-y-6">
+        <!-- Sidebar for Mobile -->
+        <aside id="mobile-menu" class="fixed top-0 left-0 w-full bg-white border-b p-4 hidden z-50">
+            <div class="flex flex-col items-start">
+                <div>
+                    <a href="{{ route('home') }}"
+                        class="group font-bold text-3xl flex items-center space-x-4 hover:text-emerald-600 transition">
+                        <x-application-logo
+                            class="w-10 h-10 fill-current text-gray-500 group-hover:text-emerald-500 transition" />
+                        <span>Mini Instagram</span>
+                    </a>
+                </div>
+
+                <nav class="flex flex-col space-y-4 pt-8">
+                    <!-- Menu Links -->
+                    <a href="{{ route('home') }}" class="flex items-center space-x-2 text-gray-700 hover:text-black">
+                        <i class="fas fa-home"></i><span>Home</span>
+                    </a>
+                    <a href="{{ route('chat.list') }}"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-black">
+                        <i class="fas fa-envelope"></i><span>Messages</span>
+                    </a>
+                    <a href="{{ route('profile.index') }}"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-black">
+                        <i class="fas fa-user"></i><span>Profile</span>
+                    </a>
+                    <a href="{{ route('my.posts') }}"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-black">
+                        <i class="fas fa-user-edit"></i><span>My Posts</span>
+                    </a>
+                    <a href="{{ route('posts.create') }}"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-black">
+                        <i class="fas fa-plus"></i><span>Create post</span>
+                    </a>
+                    <a href="{{ route('posts.index') }}"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-black">
+                        <i class="fas fa-th-list"></i><span>All posts</span>
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}" class="pt-4">
+                        @csrf
+                        <button type="submit"
+                            class="text-white bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg w-full">
+                            Logout
+                        </button>
+                    </form>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex flex-col items-center justify-center w-full md:w-3/4 p-8">
+            <div class="w-full max-w-4xl space-y-6">
                 {{ $slot }}
             </div>
-        </main>
-
-        <!-- Right Sidebar or Additional Content -->
-        <div class="hidden md:block w-1/4 p-6">
-            <h2 class="text-lg font-semibold mb-4">Additional Content</h2>
-            <p>Suggestions or trending topics could go here.</p>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            menuToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+        });
+    </script>
 </body>
 
 </html>

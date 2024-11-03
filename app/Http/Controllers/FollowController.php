@@ -13,24 +13,21 @@ class FollowController extends Controller
      */
     public function follow(User $user)
     {
-        // Check if the user is not already following this user
         if (!Auth::user()->following->contains($user->id)) {
             Auth::user()->following()->attach($user->id);
         }
 
-        return redirect()->back()->with('status', 'You are now following ' . $user->name);
+        return response()->json(['success' => true, 'message' => 'Followed successfully.']);
     }
-
     /**
      * Method to unfollow a user.
      */
     public function unfollow(User $user)
     {
-        // Check if the user is currently following this user
         if (Auth::user()->following->contains($user->id)) {
             Auth::user()->following()->detach($user->id);
         }
 
-        return redirect()->back()->with('status', 'You have unfollowed ' . $user->name);
+        return response()->json(['success' => true, 'message' => 'Unfollowed successfully.']);
     }
 }

@@ -12,17 +12,25 @@ class CommentController extends Controller
     /**
      * Store a new comment on a post
      */
+
     public function store(Request $request, Post $post)
     {
         $request->validate([
             'content' => 'required|string|max:500',
         ]);
 
-        $post->comments()->create([
+        $comment = $post->comments()->create([
             'user_id' => Auth::id(),
             'content' => $request->input('content'),
         ]);
 
-        return redirect()->back()->with('status', 'Comment added!');
+        return response()->json([
+            'success' => true,
+            'comment' => [
+                'user_name' => $comment->user->name,
+                'content' => $comment->content,
+                'created_at' => $comment->created_at->diffForHumans(),
+            ],
+        ]);
     }
 }

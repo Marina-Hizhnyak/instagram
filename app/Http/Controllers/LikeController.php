@@ -12,13 +12,12 @@ class LikeController extends Controller
      */
     public function like(Post $post)
     {
-        if (!$post->likes()->where('user_id', Auth::id())->exists()) {
-            $post->likes()->create([
-                'user_id' => Auth::id(),
-            ]);
-        }
+        $post->likes()->create(['user_id' => Auth::id()]);
 
-        return response()->json(['likes' => $post->likes()->count()]);
+        return response()->json([
+            'success' => true,
+            'likes_count' => $post->likes->count(),
+        ]);
     }
 
     /**
@@ -28,6 +27,9 @@ class LikeController extends Controller
     {
         $post->likes()->where('user_id', Auth::id())->delete();
 
-        return response()->json(['likes' => $post->likes()->count()]);
+        return response()->json([
+            'success' => true,
+            'likes_count' => $post->likes->count(),
+        ]);
     }
 }

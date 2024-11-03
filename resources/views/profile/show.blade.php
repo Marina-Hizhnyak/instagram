@@ -116,4 +116,37 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
+    function submitComment(postId) {
+        const commentContent = document.querySelector(`#comment-input-${postId}`).value;
+
+        fetch(`/posts/${postId}/comment`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    content: commentContent
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Add the new comment to the list
+                    const commentList = document.querySelector(`#comments-list-${postId}`);
+                    const newComment = document.createElement('li');
+                    newComment.classList.add('bg-white', 'p-4', 'rounded', 'shadow');
+                    newComment.innerHTML = `
+                    <p class="text-gray-700"><strong>${data.comment.user.name}</strong>: ${data.comment.content}</p>
+                    <span class="text-sm text-gray-500">${data.comment.created_at}</span>
+                `;
+                    commentList.appendChild(newComment);
+
+                    // Clear the input
+                    document.querySelector(`#comment-input-${postId}`).value = '';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 </script>
